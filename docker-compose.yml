@@ -6,24 +6,15 @@ services:
     ports:
       - '3000:3000'
     depends_on:
-      - db
+      - mongo
     environment:
-      - DATABASE_HOST=db
-      - DATABASE_PORT=5432
-      - DATABASE_USER=postgres
-      - DATABASE_PASSWORD=postgres
-      - DATABASE_NAME=youtube_sharing
+      - MONGO_URI=mongodb://mongo:27017/youtube_sharing
 
-  db:
-    image: postgres:13
+  mongo:
+    image: mongo:latest
     ports:
-      - '5432:5432'
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: youtube_sharing
+      - '27017:27017'
     volumes:
-      - postgres-data:/var/lib/postgresql/data
-
+      - mongo-data:/data/db
 volumes:
-  postgres-data:
+  mongo-data:
