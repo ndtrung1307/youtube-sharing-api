@@ -3,21 +3,21 @@ import {
   ValidationOptions,
   registerDecorator,
 } from 'class-validator';
-import { strongPasswordRegex } from '../regex';
+import { youtubeURLRegex } from '../regex';
 
-export function IsStrongPassword(validationOptions?: ValidationOptions) {
+export function IsValidYouTubeUrl(validationOptions?: ValidationOptions) {
   return function (object: object, propertyName: string) {
     registerDecorator({
-      name: 'isStrongPassword',
+      name: 'isValidYouTubeUrl',
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
       validator: {
         validate(value: any, args: ValidationArguments) {
-          return typeof value === 'string' && strongPasswordRegex.test(value);
+          return typeof value === 'string' && youtubeURLRegex.test(value);
         },
         defaultMessage(args: ValidationArguments) {
-          return 'Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character';
+          return 'url must be a valid youtube url';
         },
       },
     });

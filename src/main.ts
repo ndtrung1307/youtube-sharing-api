@@ -1,16 +1,19 @@
 import { VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
 import { AppModule } from './app.module';
 import { CustomValidationPipe } from './common/pipes/custom-validation.pipe';
+import AllExceptionFilter from './filters/all.filter';
 
-dotenv.config();
+const envFilePath = `.env.${process.env.NODE_ENV || 'local'}`;
+dotenv.config({ path: envFilePath });
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get<ConfigService>(ConfigService);
+  const httpAdapterHost = app.get(HttpAdapterHost);
 
   app.enableVersioning({
     type: VersioningType.URI,
@@ -18,6 +21,7 @@ async function bootstrap() {
   });
 
   app.useGlobalPipes(new CustomValidationPipe());
+  app.useGlobalFilters(new AllExceptionFilter(httpAdapterHost));
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle(configService.get('swagger.title'))
