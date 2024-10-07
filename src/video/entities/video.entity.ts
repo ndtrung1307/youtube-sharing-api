@@ -25,9 +25,9 @@ export class Video {
   @ManyToOne(() => User, (user) => user.videos)
   sharedBy: User;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   createdAt?: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
   updatedAt?: Date;
 }
