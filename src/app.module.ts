@@ -10,8 +10,6 @@ import { typeOrmConfig } from './config/typeorm.config';
 import youtubeConfig from './config/youtube.config';
 import { VideoModule } from './video/video.module';
 
-console.log('typeOrmConfig : ', typeOrmConfig);
-
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig),
