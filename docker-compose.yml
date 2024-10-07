@@ -12,6 +12,7 @@ services:
       - POSTGRES_USER=username
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=postgres
+    command: yarn start:prod
   postgres:
     image: postgres:16.3
     ports:
