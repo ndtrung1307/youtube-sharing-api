@@ -23,6 +23,12 @@ async function bootstrap() {
   app.useGlobalPipes(new CustomValidationPipe());
   app.useGlobalFilters(new AllExceptionFilter(httpAdapterHost));
 
+  app.enableCors({
+    origin: process.env.CORS_ORIGIN,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
+
   const swaggerConfig = new DocumentBuilder()
     .setTitle(configService.get('swagger.title'))
     .setDescription(configService.get('swagger.description'))
