@@ -49,7 +49,11 @@ export class VideoService {
     const user = await this.authService.getUserById(userId);
 
     return this.videoRepository.findOne({
-      where: { sharedBy: user, videoUrl },
+      where: {
+        sharedBy: { id: user.id },
+        videoUrl,
+      },
+      relations: ['sharedBy'],
     });
   }
 
