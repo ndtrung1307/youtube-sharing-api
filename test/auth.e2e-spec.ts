@@ -9,6 +9,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { User } from 'src/auth/entities/user.entity';
 import { hashPassword } from 'src/auth/utils/hash.utils';
 import { CustomValidationPipe } from 'src/common/pipes/custom-validation.pipe';
+import { typeOrmConfigTest } from 'src/config/typeorm.config.test';
 import request from 'supertest';
 import { Repository } from 'typeorm';
 
@@ -22,13 +23,7 @@ describe('AuthModule (integration)', () => {
         ConfigModule.forRoot({
           isGlobal: true,
         }),
-        TypeOrmModule.forRoot({
-          type: 'mongodb',
-          database: ':memory:',
-          entities: [User],
-          synchronize: true,
-        }),
-        TypeOrmModule.forFeature([User]),
+        TypeOrmModule.forRoot(typeOrmConfigTest),
         JwtModule.register({
           secret: 'testSecret',
           signOptions: { expiresIn: '1h' },
@@ -41,10 +36,11 @@ describe('AuthModule (integration)', () => {
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new CustomValidationPipe());
+    await app.init();
+
     userRepository = moduleFixture.get<Repository<User>>(
       getRepositoryToken(User),
     );
-    await app.init();
   });
 
   afterAll(async () => {
