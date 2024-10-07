@@ -12,6 +12,9 @@ import { comparePassword, hashPassword } from './utils/hash.utils';
 
 jest.mock('./utils/hash.utils');
 
+const user = new User();
+user.id = new UUID().toString();
+
 describe('AuthService', () => {
   let service: AuthService;
   let userRepository: Repository<User>;
@@ -45,7 +48,7 @@ describe('AuthService', () => {
         email: 'test@example.com',
         password: 'password',
       };
-      jest.spyOn(userRepository, 'findOne').mockResolvedValueOnce(new User());
+      jest.spyOn(userRepository, 'findBy').mockResolvedValueOnce([user]);
 
       await expect(service.register(registerDto)).rejects.toThrow(
         BadRequestException,
@@ -57,7 +60,7 @@ describe('AuthService', () => {
         email: 'test@example.com',
         password: 'password',
       };
-      jest.spyOn(userRepository, 'findOne').mockResolvedValueOnce(null);
+      jest.spyOn(userRepository, 'findBy').mockResolvedValueOnce([]);
       jest.spyOn(userRepository, 'create').mockReturnValueOnce(new User());
       jest.spyOn(userRepository, 'save').mockResolvedValueOnce(new User());
       (hashPassword as jest.Mock).mockResolvedValueOnce('hashedPassword');
@@ -74,7 +77,7 @@ describe('AuthService', () => {
         email: 'test@example.com',
         password: 'password',
       };
-      jest.spyOn(userRepository, 'findOne').mockResolvedValueOnce(null);
+      jest.spyOn(userRepository, 'findBy').mockResolvedValueOnce([]);
 
       await expect(service.login(loginDto)).rejects.toThrow(
         UnauthorizedException,
@@ -88,7 +91,7 @@ describe('AuthService', () => {
       };
       const user = new User();
       user.password = 'hashedPassword';
-      jest.spyOn(userRepository, 'findOne').mockResolvedValueOnce(user);
+      jest.spyOn(userRepository, 'findBy').mockResolvedValueOnce([user]);
       (comparePassword as jest.Mock).mockResolvedValueOnce(false);
 
       await expect(service.login(loginDto)).rejects.toThrow(
@@ -105,7 +108,7 @@ describe('AuthService', () => {
       user.id = new UUID().toString();
       user.email = 'test@example.com';
       user.password = 'hashedPassword';
-      jest.spyOn(userRepository, 'findOne').mockResolvedValueOnce(user);
+      jest.spyOn(userRepository, 'findBy').mockResolvedValueOnce([user]);
       (comparePassword as jest.Mock).mockResolvedValueOnce(true);
       (jwtService.sign as jest.Mock).mockReturnValueOnce('jwtToken');
 

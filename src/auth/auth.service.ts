@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { User } from './entities/user.entity';
@@ -24,9 +24,12 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    const user = await this.userRepository.findOne({
-      where: { email: loginDto.email },
-    });
+    const user = (
+      await this.userRepository.findBy({
+        email: ILike(`%${loginDto.email}%`),
+      })
+    )[0];
+
     if (!user) {
       throw new UnauthorizedException('Unauthorized');
     }
@@ -46,9 +49,11 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto) {
-    const existingUser = await this.userRepository.findOne({
-      where: { email: registerDto.email },
-    });
+    const existingUser = (
+      await this.userRepository.findBy({
+        email: ILike(`%${registerDto.email}%`),
+      })
+    )[0];
     if (existingUser) {
       throw new BadRequestException('Email already in use');
     }

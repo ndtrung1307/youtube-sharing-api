@@ -142,7 +142,8 @@ describe('VideoService', () => {
       );
 
       expect(videoRepository.findOne).toHaveBeenCalledWith({
-        where: { sharedBy: user, videoUrl },
+        where: { sharedBy: { id: user.id }, videoUrl },
+        relations: ['sharedBy'],
       });
       expect(result).toEqual(video);
     });
@@ -159,7 +160,8 @@ describe('VideoService', () => {
       );
 
       expect(videoRepository.findOne).toHaveBeenCalledWith({
-        where: { sharedBy: user, videoUrl },
+        where: { sharedBy: { id: user.id }, videoUrl },
+        relations: ['sharedBy'],
       });
       expect(result).toBeNull();
     });
