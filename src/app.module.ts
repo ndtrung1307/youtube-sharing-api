@@ -8,6 +8,7 @@ import apiConfig from './config/api.config';
 import swaggerConfig from './config/swagger.config';
 import { typeOrmConfig } from './config/typeorm.config';
 import youtubeConfig from './config/youtube.config';
+import { NotificationsModule } from './notifications/notifications.module';
 import { VideoModule } from './video/video.module';
 
 @Module({
@@ -19,6 +20,7 @@ import { VideoModule } from './video/video.module';
     }),
     AuthModule,
     VideoModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

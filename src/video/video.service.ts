@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { lastValueFrom } from 'rxjs';
 import { AuthService } from 'src/auth/auth.service';
 import { youtubeURLRegex } from 'src/common/regex';
+import { NotificationsGateway } from 'src/notifications/notifications.gateway';
 import { Repository } from 'typeorm';
 import { Video } from './entities/video.entity';
 
@@ -37,6 +38,7 @@ export class VideoService {
     @InjectRepository(Video)
     private readonly videoRepository: Repository<Video>,
     private readonly authService: AuthService,
+    private readonly notificationsGateway: NotificationsGateway,
   ) {
     this.apiKey = this.configService.get<string>('youtube.apiKey');
     this.apiUrl = this.configService.get<string>('youtube.apiV3Url');
@@ -96,7 +98,14 @@ export class VideoService {
     video.sharedBy = user;
 
     try {
-      return await this.videoRepository.save(video);
+      const savedVideo = await this.videoRepository.save(video);
+
+      this.notificationsGateway.server.emit('newVideo', {
+        title: videoDetails.title,
+        sharedBy: user.email,
+      });
+
+      return savedVideo;
     } catch (error) {
       throw new Error(`Failed to save video to database: ${error.message}`);
     }
