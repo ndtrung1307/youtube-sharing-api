@@ -3,7 +3,7 @@ import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { ObjectId } from 'mongodb';
+import { UUID } from 'mongodb';
 import { of } from 'rxjs';
 import { AuthService } from 'src/auth/auth.service';
 import { User } from 'src/auth/entities/user.entity';
@@ -15,6 +15,7 @@ const mockVideoRepository = () => ({
   findOne: jest.fn(),
   find: jest.fn(),
   save: jest.fn(),
+  createQueryBuilder: jest.fn(),
 });
 
 const mockHttpService = {
@@ -29,10 +30,10 @@ const mockAuthService = {
   getUserById: jest.fn(),
 };
 
-const userId = new ObjectId();
+const userId = new UUID().toString();
 
 const user = new User();
-user._id = userId;
+user.id = userId;
 user.email = 'user@email.com';
 user.password = 'password';
 
@@ -70,7 +71,7 @@ describe('VideoService', () => {
 
       const returnedVideo = {
         ...videoDetails,
-        _id: new ObjectId(),
+        id: new UUID().toString(),
         sharedBy: user,
       };
 
@@ -126,7 +127,7 @@ describe('VideoService', () => {
     it('should return a video if found', async () => {
       const videoUrl = 'https://www.youtube.com/watch?v=test';
       const video = {
-        _id: new ObjectId(),
+        id: new UUID().toString(),
         videoUrl,
         sharedBy: user,
         title: 'Test Video',
@@ -167,7 +168,6 @@ describe('VideoService', () => {
   describe('getVideoDetails', () => {
     it('should return video details from YouTube API', async () => {
       const videoUrl = 'https://www.youtube.com/watch?v=IWKeU6YxHno';
-      const videoId = 'IWKeU6YxHno';
       const apiKey = 'apiKey';
       const youtubeApiResponse = {
         data: {
@@ -230,7 +230,7 @@ describe('VideoService', () => {
     it('should return a list of videos', async () => {
       const videos = [
         {
-          _id: new ObjectId(),
+          id: new UUID().toString(),
           title: 'Test Video',
           description: 'Test Description',
           videoUrl: 'https://www.youtube.com/watch?v=test',
@@ -240,11 +240,15 @@ describe('VideoService', () => {
         },
       ];
 
-      jest.spyOn(videoRepository, 'find').mockResolvedValue(videos);
+      jest.spyOn(videoRepository, 'createQueryBuilder').mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(videos),
+      } as any);
 
       const result = await service.getListVideos();
 
-      expect(videoRepository.find).toHaveBeenCalled();
+      expect(videoRepository.createQueryBuilder).toHaveBeenCalled();
       expect(result).toEqual(videos);
     });
 

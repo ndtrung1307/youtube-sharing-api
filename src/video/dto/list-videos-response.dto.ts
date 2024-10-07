@@ -13,6 +13,9 @@ export class ListVideosResponseDto {
   @ApiProperty({ example: 'https://www.youtube.com/watch?v=r9e1QZhs2Vw' })
   videoUrl: string;
 
+  @ApiProperty({ example: 'userEmail@example.com' })
+  sharedBy: string;
+
   @ApiProperty({ example: '2021-07-19T14:00:00.000Z' })
   createdAt: Date;
 

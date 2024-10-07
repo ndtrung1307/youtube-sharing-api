@@ -1,8 +1,9 @@
 import { BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ObjectId } from 'mongodb';
+import { UUID } from 'mongodb';
 import { ShareVideoPayloadDto } from './dto/share-video.dto';
+import { toVideoResponse } from './mapper/videoResponse.mapper';
 import { VideoController } from './video.controller';
 import { VideoService } from './video.service';
 
@@ -18,21 +19,21 @@ const mockJwtService = {
 };
 
 const user = {
-  _id: new ObjectId(),
+  id: new UUID().toString(),
   email: 'email@test.com',
   password: 'password',
   videos: [],
 };
 
 const userPayload = {
-  userId: user._id.toString(),
+  userId: user.id,
   email: user.email,
   iat: 123456,
   exp: 123456,
 };
 
 const returnedVideo = {
-  _id: new ObjectId(),
+  id: new UUID().toString(),
   title: 'Test Video',
   description: 'Test Description',
   sharedBy: user,
@@ -95,14 +96,14 @@ describe('VideoController', () => {
       const result = await controller.shareVideo(payload, userPayload);
 
       expect(service.getVideoByUserIdAndVideoUrl).toHaveBeenCalledWith(
-        user._id.toString(),
+        user.id,
         payload.videoUrl,
       );
       expect(service.getVideoDetails).toHaveBeenCalledWith(payload.videoUrl);
       expect(service.createVideo).toHaveBeenCalledWith({
         title: videoDetails.snippet.title,
         description: videoDetails.snippet.description,
-        sharedBy: user._id.toString(),
+        sharedBy: user.id,
         videoUrl: payload.videoUrl,
       });
       expect(result).toEqual({ message: 'Video shared successfully' });
@@ -111,13 +112,14 @@ describe('VideoController', () => {
 
   describe('listVideos', () => {
     it('should return a list of videos', async () => {
-      const videos = [returnedVideo];
+      const videos = [{ ...returnedVideo, sharedBy: user }];
+      const expectedVideos = videos.map(toVideoResponse);
       jest.spyOn(service, 'getListVideos').mockResolvedValue(videos);
 
       const result = await controller.listVideos();
 
       expect(service.getListVideos).toHaveBeenCalled();
-      expect(result).toEqual({ videos });
+      expect(result).toEqual({ videos: expectedVideos });
     });
   });
 });

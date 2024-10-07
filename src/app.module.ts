@@ -4,22 +4,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { User } from './auth/entities/user.entity';
 import apiConfig from './config/api.config';
 import swaggerConfig from './config/swagger.config';
+import { typeOrmConfig } from './config/typeorm.config';
 import youtubeConfig from './config/youtube.config';
-import { Video } from './video/entities/video.entity';
 import { VideoModule } from './video/video.module';
+
+console.log('typeOrmConfig : ', typeOrmConfig);
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mongodb',
-      url: process.env.MONGO_URI,
-      synchronize: true,
-      useUnifiedTopology: true,
-      entities: [User, Video],
-    }),
+    TypeOrmModule.forRoot(typeOrmConfig),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [youtubeConfig, swaggerConfig, apiConfig],

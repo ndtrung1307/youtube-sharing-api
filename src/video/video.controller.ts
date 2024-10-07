@@ -6,11 +6,17 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { JwtAuth, userPayload } from 'src/auth/decorators/jwt-auth.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ListVideosResponseDto } from './dto/list-videos-response.dto';
 import { ShareVideoPayloadDto } from './dto/share-video.dto';
+import { toVideoResponse } from './mapper/videoResponse.mapper';
 import { VideoService } from './video.service';
 
 @ApiTags('videos')
@@ -20,6 +26,7 @@ export class VideoController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Share a Youtube video by video URL' })
   @ApiResponse({ status: 201, description: 'Share video successfully.' })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
@@ -63,6 +70,6 @@ export class VideoController {
   })
   async listVideos() {
     const videos = await this.videoService.getListVideos();
-    return { videos };
+    return { videos: videos.map((video) => toVideoResponse(video)) };
   }
 }

@@ -2,7 +2,7 @@ import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { ObjectId } from 'mongodb';
+import { UUID } from 'mongodb';
 import { Repository } from 'typeorm';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -102,7 +102,7 @@ describe('AuthService', () => {
         password: 'password',
       };
       const user = new User();
-      user._id = new ObjectId();
+      user.id = new UUID().toString();
       user.email = 'test@example.com';
       user.password = 'hashedPassword';
       jest.spyOn(userRepository, 'findOne').mockResolvedValueOnce(user);

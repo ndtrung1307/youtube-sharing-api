@@ -5,7 +5,7 @@ FROM node:18
 WORKDIR /usr/src/app
 
 # Install app dependencies
-COPY package.json ./
+COPY package.json yarn.lock ./
 RUN yarn install
 
 # Bundle app source

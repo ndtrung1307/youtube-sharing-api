@@ -1,26 +1,25 @@
-import { ObjectId } from 'mongodb';
 import { User } from 'src/auth/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
-  ObjectIdColumn,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
 export class Video {
-  @ObjectIdColumn()
-  _id: ObjectId;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 250 })
   title: string;
 
-  @Column()
+  @Column({ type: 'text' })
   description: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 200 })
   videoUrl: string;
 
   @ManyToOne(() => User, (user) => user.videos)

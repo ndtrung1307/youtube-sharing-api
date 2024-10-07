@@ -1,9 +1,7 @@
-import { ObjectId } from 'mongodb';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  ObjectIdColumn,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -12,9 +10,8 @@ import { Video } from '../../video/entities/video.entity';
 
 @Entity()
 export class User {
-  @ObjectIdColumn()
-  @PrimaryGeneratedColumn()
-  _id: ObjectId;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ unique: true })
   email: string;

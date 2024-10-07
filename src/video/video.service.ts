@@ -100,11 +100,11 @@ export class VideoService {
 
   async getListVideos(): Promise<Video[]> {
     try {
-      return await this.videoRepository.find({
-        order: {
-          createdAt: 'DESC',
-        },
-      });
+      return await this.videoRepository
+        .createQueryBuilder('video')
+        .leftJoinAndSelect('video.sharedBy', 'user')
+        .orderBy('video.createdAt', 'DESC')
+        .getMany();
     } catch (error) {
       throw new Error(`Failed to fetch videos: ${error.message}`);
     }
