@@ -10,6 +10,7 @@ import { User } from 'src/auth/entities/user.entity';
 import { hashPassword } from 'src/auth/utils/hash.utils';
 import { CustomValidationPipe } from 'src/common/pipes/custom-validation.pipe';
 import { typeOrmConfigTest } from 'src/config/typeorm.config.test';
+import { Video } from 'src/video/entities/video.entity';
 import request from 'supertest';
 import { Repository } from 'typeorm';
 
@@ -24,6 +25,7 @@ describe('AuthModule (integration)', () => {
           isGlobal: true,
         }),
         TypeOrmModule.forRoot(typeOrmConfigTest),
+        TypeOrmModule.forFeature([User, Video]),
         JwtModule.register({
           secret: 'testSecret',
           signOptions: { expiresIn: '1h' },

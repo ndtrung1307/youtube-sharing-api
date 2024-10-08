@@ -7,6 +7,7 @@ import { UUID } from 'mongodb';
 import { of } from 'rxjs';
 import { AuthService } from 'src/auth/auth.service';
 import { User } from 'src/auth/entities/user.entity';
+import { NotificationsGateway } from 'src/notifications/notifications.gateway';
 import { Repository } from 'typeorm';
 import { Video } from './entities/video.entity';
 import { VideoService } from './video.service';
@@ -30,6 +31,12 @@ const mockAuthService = {
   getUserById: jest.fn(),
 };
 
+const mockNotificationsGateway = {
+  server: {
+    emit: jest.fn(),
+  },
+};
+
 const userId = new UUID().toString();
 
 const user = new User();
@@ -49,6 +56,7 @@ describe('VideoService', () => {
         { provide: HttpService, useValue: mockHttpService },
         { provide: ConfigService, useValue: mockConfigService },
         { provide: AuthService, useValue: mockAuthService },
+        { provide: NotificationsGateway, useValue: mockNotificationsGateway },
       ],
     }).compile();
 
