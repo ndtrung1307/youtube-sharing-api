@@ -11,6 +11,7 @@ import { Request } from 'express';
 interface CustomRequest extends Request {
   user?: any;
 }
+const UnauthorizedError = new UnauthorizedException('Unauthorized');
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -24,12 +25,12 @@ export class JwtAuthGuard implements CanActivate {
     const authHeader = request.headers.authorization;
 
     if (!authHeader) {
-      throw new UnauthorizedException('Authorization header is missing');
+      throw UnauthorizedError;
     }
 
     const token = authHeader.split(' ')[1];
     if (!token) {
-      throw new UnauthorizedException('JWT token is missing');
+      throw UnauthorizedError;
     }
 
     try {
@@ -37,7 +38,7 @@ export class JwtAuthGuard implements CanActivate {
       request.user = payload;
       return true;
     } catch (error) {
-      throw new UnauthorizedException('Invalid JWT token');
+      throw UnauthorizedError;
     }
   }
 }

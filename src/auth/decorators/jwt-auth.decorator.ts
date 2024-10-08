@@ -23,7 +23,7 @@ export const JwtAuth = createParamDecorator(
     const authHeader = request.headers.authorization;
 
     if (!authHeader) {
-      throw new UnauthorizedException('Authorization header is missing');
+      throw new UnauthorizedException('Unauthorized');
     }
 
     const token = authHeader.split(' ')[1];
