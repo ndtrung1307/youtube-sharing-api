@@ -89,6 +89,13 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
+    "coveragePathIgnorePatterns": [
+      "src/config/",
+      "src/.*\\.module\\.(t|j)s",
+      "src/.*\\.dto\\.(t|j)s",
+      "src/common/pipes/custom-validation.pipe.ts",
+      "src/main.(t|j)s"
+    ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
     "moduleNameMapper": {
