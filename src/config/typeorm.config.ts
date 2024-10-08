@@ -13,4 +13,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   database: process.env.POSTGRES_DB,
   entities: [__dirname + '/../**/*.entity.{js,ts}'],
   synchronize: true,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 };
