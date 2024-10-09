@@ -24,11 +24,7 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    const user = (
-      await this.userRepository.findBy({
-        email: ILike(`%${loginDto.email}%`),
-      })
-    )[0];
+    const user = await this.findByEmail(loginDto.email);
 
     if (!user) {
       throw new UnauthorizedException('Unauthorized');
@@ -42,18 +38,11 @@ export class AuthService {
       throw new UnauthorizedException('Unauthorized');
     }
 
-    const payload = { email: user.email, userId: user.id };
-    const token = this.jwtService.sign(payload);
-
-    return { access_token: token };
+    return { access_token: this.signUserToken(user) };
   }
 
   async register(registerDto: RegisterDto) {
-    const existingUser = (
-      await this.userRepository.findBy({
-        email: ILike(`%${registerDto.email}%`),
-      })
-    )[0];
+    const existingUser = await this.findByEmail(registerDto.email);
     if (existingUser) {
       throw new BadRequestException('Email already in use');
     }
@@ -63,6 +52,20 @@ export class AuthService {
       password: hashedPassword,
     });
     await this.userRepository.save(newUser);
-    return { message: 'Registration successful' };
+
+    return { access_token: this.signUserToken(newUser) };
+  }
+
+  private async findByEmail(email: string): Promise<User | null> {
+    return (
+      await this.userRepository.findBy({
+        email: ILike(`%${email}%`),
+      })
+    )[0];
+  }
+
+  private signUserToken(user: User) {
+    const payload = { email: user.email, userId: user.id };
+    return this.jwtService.sign(payload);
   }
 }

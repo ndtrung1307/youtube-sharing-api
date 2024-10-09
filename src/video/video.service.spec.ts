@@ -44,6 +44,18 @@ user.id = userId;
 user.email = 'user@email.com';
 user.password = 'password';
 
+const videos = [
+  {
+    id: new UUID().toString(),
+    title: 'Test Video',
+    description: 'Test Description',
+    videoUrl: 'https://www.youtube.com/watch?v=test',
+    sharedBy: user,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
 describe('VideoService', () => {
   let service: VideoService;
   let videoRepository: Repository<Video>;
@@ -238,18 +250,6 @@ describe('VideoService', () => {
 
   describe('getListVideos', () => {
     it('should return a list of videos', async () => {
-      const videos = [
-        {
-          id: new UUID().toString(),
-          title: 'Test Video',
-          description: 'Test Description',
-          videoUrl: 'https://www.youtube.com/watch?v=test',
-          sharedBy: user,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-      ];
-
       jest.spyOn(videoRepository, 'createQueryBuilder').mockReturnValue({
         leftJoinAndSelect: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),

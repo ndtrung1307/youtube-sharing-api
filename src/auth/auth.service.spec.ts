@@ -64,10 +64,11 @@ describe('AuthService', () => {
       jest.spyOn(userRepository, 'create').mockReturnValueOnce(new User());
       jest.spyOn(userRepository, 'save').mockResolvedValueOnce(new User());
       (hashPassword as jest.Mock).mockResolvedValueOnce('hashedPassword');
+      (jwtService.sign as jest.Mock).mockReturnValueOnce('jwtToken');
 
       const result = await service.register(registerDto);
 
-      expect(result).toEqual({ message: 'Registration successful' });
+      expect(result).toEqual({ access_token: 'jwtToken' });
     });
   });
 

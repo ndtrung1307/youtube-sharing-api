@@ -1,8 +1,4 @@
-import {
-  ValidationArguments,
-  ValidationOptions,
-  registerDecorator,
-} from 'class-validator';
+import { ValidationOptions, registerDecorator } from 'class-validator';
 import { strongPasswordRegex } from '../regex';
 
 export function IsStrongPassword(validationOptions?: ValidationOptions) {
@@ -13,10 +9,10 @@ export function IsStrongPassword(validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        validate(value: any, args: ValidationArguments) {
+        validate(value: any) {
           return typeof value === 'string' && strongPasswordRegex.test(value);
         },
-        defaultMessage(args: ValidationArguments) {
+        defaultMessage() {
           return 'Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character';
         },
       },

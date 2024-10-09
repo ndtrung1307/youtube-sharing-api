@@ -1,8 +1,4 @@
-import {
-  ValidationArguments,
-  ValidationOptions,
-  registerDecorator,
-} from 'class-validator';
+import { ValidationOptions, registerDecorator } from 'class-validator';
 import { youtubeURLRegex } from '../regex';
 
 export function IsValidYouTubeUrl(validationOptions?: ValidationOptions) {
@@ -13,10 +9,10 @@ export function IsValidYouTubeUrl(validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        validate(value: any, args: ValidationArguments) {
+        validate(value: any) {
           return typeof value === 'string' && youtubeURLRegex.test(value);
         },
-        defaultMessage(args: ValidationArguments) {
+        defaultMessage() {
           return 'url must be a valid youtube url';
         },
       },
